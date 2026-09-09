@@ -103,7 +103,7 @@ function Sidebar() {
           </div>
           <div className="flex items-center justify-between">
             <span className="text-slate-500">Models</span>
-            <span className="text-slate-300 font-semibold">3 / 4 loaded</span>
+            <span className="text-slate-300 font-semibold">4 / 4 loaded</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-slate-500">Course</span>

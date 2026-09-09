@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Activity, ShieldAlert, BarChart3, Users, Maximize2, Info, Box, Sparkles, Image as ImageIcon, Layers, ArrowRight, BookOpen, Scale } from 'lucide-react';
+import { Activity, ShieldAlert, BarChart3, Users, Maximize2, Info, Box, Sparkles, Image as ImageIcon, Layers, ArrowRight, BookOpen, Scale, Zap } from 'lucide-react';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -120,7 +120,7 @@ export default function Dashboard() {
         <StatCard title="Safety Classes" value="10" icon={ShieldAlert} trend={0} />
         <StatCard title="Training Images" value="3,245" icon={Activity} trend={12} />
         <StatCard title="Total Detections" value="14.2K" icon={Users} trend={8} />
-        <StatCard title="Models Implemented" value="3 / 4" icon={BarChart3} trend={75} />
+        <StatCard title="Models Implemented" value="4 / 4" icon={BarChart3} trend={100} />
       </div>
 
       {/* Model Cards */}
@@ -129,7 +129,7 @@ export default function Dashboard() {
           <div className="section-icon"><Layers className="w-4 h-4" /></div>
           Implemented Models
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           <ModelCard
             name="Autoencoder"
             icon={Box}
@@ -167,6 +167,19 @@ export default function Dashboard() {
               { label: 'FID', value: '98.3' },
               { label: 'Latent', value: '100-d' },
               { label: 'Epochs', value: '50' },
+            ]}
+          />
+          <ModelCard
+            name="Transformer"
+            icon={Layers}
+            badge="R2"
+            description="Multi-modal Vision Transformer with cross-attention for future site state prediction and spatial risk hazard mapping."
+            path="/transformer"
+            color="#06b6d4"
+            metrics={[
+              { label: 'Heads', value: '8' },
+              { label: 'Embed', value: '256-d' },
+              { label: 'Outputs', value: '2 maps' },
             ]}
           />
         </div>

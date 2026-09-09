@@ -14,6 +14,10 @@ from src.models.vae import ConvVAE
 from src.models.transformer_models import ConstructionProgressTransformer
 from src.models.gan import Generator
 
+# Project root and weights directory
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+WEIGHTS_DIR = os.path.join(BASE_DIR, "weights")
+
 class ModelInferenceManager:
     def __init__(self):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -27,17 +31,28 @@ class ModelInferenceManager:
         ).to(self.device)
         self.gan = Generator(latent_dim=100, out_channels=3, features=64).to(self.device)
 
-        # Try to load real weights, else fallback to random initialization
-        try:
-            self.ae.load_state_dict(torch.load("ae_weights.pkl", map_location=self.device))
-            self.vae.load_state_dict(torch.load("vae_weights.pkl", map_location=self.device))
-            self.transformer.load_state_dict(torch.load("transformer_weights.pkl", map_location=self.device))
-            self.gan.load_state_dict(torch.load("gan_weights.pkl", map_location=self.device))
-            print("Successfully loaded model weights.")
-        except FileNotFoundError:
-            print("Warning: Model weights (.pkl) not found. Running with randomly initialized weights.")
-        except Exception as e:
-            print(f"Error loading weights: {e}")
+        # Try to load real weights from the project's weights directory
+        weight_files = {
+            'ae': ('ae_weights.pkl', self.ae),
+            'vae': ('vae_weights.pkl', self.vae),
+            'transformer': ('transformer_weights.pkl', self.transformer),
+            'gan': ('gan_weights.pkl', self.gan),
+        }
+        
+        loaded_count = 0
+        for name, (filename, model) in weight_files.items():
+            weight_path = os.path.join(WEIGHTS_DIR, filename)
+            if os.path.exists(weight_path):
+                try:
+                    model.load_state_dict(torch.load(weight_path, map_location=self.device, weights_only=True))
+                    print(f"  [OK] Loaded {name} weights from {weight_path}")
+                    loaded_count += 1
+                except Exception as e:
+                    print(f"  [ERR] Error loading {name} weights: {e}")
+            else:
+                print(f"  [WARN] {name} weights not found at {weight_path} -- using random initialization")
+        
+        print(f"Model loading complete: {loaded_count}/{len(weight_files)} models loaded with trained weights.")
 
         # Evaluation mode
         self.ae.eval()
