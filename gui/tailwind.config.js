@@ -7,11 +7,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#14b8a6",
-        secondary: "#8b5cf6",
-        dark: "#0f172a",
-        darker: "#020617",
-        panel: "#1e293b",
+        primary: "#003153",      // IIT Bombay Prussian Blue
+        secondary: "#A6A6A6",    // IIT Bombay Silver
+        dark: "#1e293b",         // Soft text color
+        darker: "#f8fafc",       // Light background
+        panel: "#ffffff",        // White panels
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

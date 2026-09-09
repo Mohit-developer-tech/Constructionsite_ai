@@ -95,25 +95,64 @@ export default function Dashboard() {
       exit={{ opacity: 0, y: -20 }}
       className="space-y-8 max-w-7xl mx-auto"
     >
-      {/* Hero Header */}
-      <header className="relative">
-        <div className="absolute -top-20 -left-20 w-72 h-72 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute -top-10 right-0 w-56 h-56 bg-secondary/10 rounded-full blur-[80px] pointer-events-none" />
-        <motion.div variants={itemVariants} className="relative z-10">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="badge badge-primary">GenAI Lab Project</span>
-            <span className="badge badge-secondary">Review 1</span>
-          </div>
-          <h2 className="text-5xl font-black tracking-tight gradient-text leading-tight">
-            Construction Site AI
-          </h2>
-          <h3 className="text-2xl font-bold text-slate-400 mt-1">Digital Twin &amp; Generative Modeling</h3>
-          <p className="text-slate-500 mt-3 max-w-2xl leading-relaxed">
-            End-to-end AI framework for construction site safety analysis, scene reconstruction, 
-            and synthetic data generation using Autoencoders, VAEs, and DCGANs.
-          </p>
+      {/* Header */}
+      <header className="mb-2 flex flex-col md:flex-row md:items-end justify-between gap-4 relative z-10">
+        <div>
+          <motion.div variants={itemVariants} className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-md">
+              <Activity className="w-5 h-5 text-white" />
+            </div>
+            <h2 className="text-4xl font-black tracking-tight text-slate-800">
+              ConstructionSite AI
+            </h2>
+          </motion.div>
+          <motion.p variants={itemVariants} className="text-slate-500 text-lg">
+            Generative Framework for Construction Site Monitoring & Safety Analysis
+          </motion.p>
+        </div>
+        <motion.div variants={itemVariants} className="flex gap-3">
+          <Link to="/transformer" className="btn-primary py-2.5 px-5 shadow-sm text-sm">
+            Run Simulation <ArrowRight className="w-4 h-4" />
+          </Link>
         </motion.div>
       </header>
+
+      {/* Featured Maps Layout (Sample Structure) */}
+      <motion.div variants={itemVariants} className="w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          
+          {/* Left Feature: Future Simulation */}
+          <div className="flex flex-col group cursor-pointer">
+            <div className="relative w-full aspect-[4/3] bg-slate-100 overflow-hidden mb-4 rounded-sm border border-slate-200">
+              {/* Using a placeholder gradient or image for visual structure */}
+              <div className="absolute inset-0 bg-gradient-to-br from-slate-200 to-slate-300 group-hover:scale-105 transition-transform duration-700 flex items-center justify-center">
+                 <div className="text-slate-400 flex flex-col items-center">
+                    <Maximize2 className="w-12 h-12 mb-3 opacity-50" />
+                    <span className="text-sm font-semibold tracking-widest uppercase">Simulation Map Data</span>
+                 </div>
+              </div>
+            </div>
+            <h3 className="text-2xl font-black text-slate-800 uppercase tracking-tight">Future State</h3>
+            <p className="text-slate-500 text-sm mt-1">Predicted visual progression</p>
+          </div>
+
+          {/* Right Feature: Risk Map */}
+          <div className="flex flex-col group cursor-pointer">
+            <div className="relative w-full aspect-[4/3] bg-slate-100 overflow-hidden mb-4 rounded-sm border border-slate-200">
+              {/* Using a placeholder gradient or image for visual structure */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-slate-800 to-slate-900 group-hover:scale-105 transition-transform duration-700 flex items-center justify-center">
+                 <div className="text-slate-400 flex flex-col items-center">
+                    <ShieldAlert className="w-12 h-12 mb-3 opacity-50" />
+                    <span className="text-sm font-semibold tracking-widest uppercase">Risk Map Data</span>
+                 </div>
+              </div>
+            </div>
+            <h3 className="text-2xl font-black text-slate-800 uppercase tracking-tight">Spatial Risk</h3>
+            <p className="text-slate-500 text-sm mt-1">Hazard detection zones</p>
+          </div>
+
+        </div>
+      </motion.div>
 
       {/* Stats Overview */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
