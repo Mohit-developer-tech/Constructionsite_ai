@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Loader2, Upload, ArrowRight, Hash, Cpu, Layers, Activity, Image as ImageIcon } from 'lucide-react';
+import { Sparkles, Loader2, Upload, ArrowRight, Hash, Cpu, Layers, Activity,
+         Image as ImageIcon, FlaskConical, Thermometer, Zap, CheckCircle2, AlertTriangle } from 'lucide-react';
 import axios from 'axios';
 
 const API = 'http://localhost:8000';
@@ -15,14 +16,41 @@ const itemVariants = {
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
 };
 
-export default function VaeView() {
-  const [generatedUrl, setGeneratedUrl] = useState(null);
-  const [isGenerating, setIsGenerating] = useState(false);
+// ── Safety class definitions ──────────────────────────────────────────
+const SAFETY_CLASSES = [
+  { idx: 0, label: 'Hardhat',        type: 'safe',    emoji: '⛑️'  },
+  { idx: 1, label: 'Mask',           type: 'safe',    emoji: '😷'  },
+  { idx: 2, label: 'NO-Hardhat',     type: 'danger',  emoji: '🚨'  },
+  { idx: 3, label: 'NO-Mask',        type: 'danger',  emoji: '⚠️'  },
+  { idx: 4, label: 'NO-Safety Vest', type: 'danger',  emoji: '🔴'  },
+  { idx: 5, label: 'Person',         type: 'neutral', emoji: '🧑'  },
+  { idx: 6, label: 'Safety Cone',    type: 'safe',    emoji: '🔶'  },
+  { idx: 7, label: 'Safety Vest',    type: 'safe',    emoji: '🦺'  },
+  { idx: 8, label: 'machinery',      type: 'neutral', emoji: '🏗️' },
+  { idx: 9, label: 'vehicle',        type: 'neutral', emoji: '🚛'  },
+];
 
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
+const CLASS_STYLE = {
+  safe:    { border: 'border-emerald-300', bg: 'bg-emerald-50',  text: 'text-emerald-700',  badge: 'bg-emerald-100 text-emerald-700 border-emerald-200',  ring: 'ring-emerald-400' },
+  danger:  { border: 'border-rose-300',    bg: 'bg-rose-50',     text: 'text-rose-700',     badge: 'bg-rose-100 text-rose-700 border-rose-200',           ring: 'ring-rose-400'    },
+  neutral: { border: 'border-slate-300',   bg: 'bg-slate-50',    text: 'text-slate-700',    badge: 'bg-slate-100 text-slate-600 border-slate-200',        ring: 'ring-slate-400'   },
+};
+
+export default function VaeView() {
+  // Standard VAE state
+  const [generatedUrl, setGeneratedUrl]         = useState(null);
+  const [isGenerating, setIsGenerating]         = useState(false);
+  const [selectedFile, setSelectedFile]         = useState(null);
+  const [previewUrl, setPreviewUrl]             = useState(null);
   const [reconstructedUrl, setReconstructedUrl] = useState(null);
   const [isReconstructing, setIsReconstructing] = useState(false);
+
+  // CVAE conditional generation state
+  const [selectedClass, setSelectedClass]       = useState(null);
+  const [temperature, setTemperature]           = useState(1.0);
+  const [cvaeUrl, setCvaeUrl]                   = useState(null);
+  const [isCvaeGenerating, setIsCvaeGenerating] = useState(false);
+  const [cvaeResult, setCvaeResult]             = useState(null);
 
   const handleGenerate = async () => {
     setIsGenerating(true);
@@ -59,6 +87,27 @@ export default function VaeView() {
       alert('Failed to connect to backend.');
     } finally {
       setIsReconstructing(false);
+    }
+  };
+
+  // ── CVAE conditional generation handler ────────────────────────────
+  const handleCvaeGenerate = async () => {
+    if (selectedClass === null) return;
+    setIsCvaeGenerating(true);
+    setCvaeUrl(null);
+    setCvaeResult(null);
+    try {
+      const formData = new FormData();
+      formData.append('class_idx',   selectedClass.idx);
+      formData.append('temperature', temperature);
+      const response = await axios.post(`${API}/api/vae/generate_conditional`, formData);
+      setCvaeUrl(response.data.generated_image_url);
+      setCvaeResult(response.data);
+    } catch (error) {
+      console.error('CVAE generation error:', error);
+      alert('Failed to connect to backend. Make sure server is running.');
+    } finally {
+      setIsCvaeGenerating(false);
     }
   };
 
@@ -287,7 +336,181 @@ export default function VaeView() {
         </motion.div>
       </div>
 
-      {/* Training Metrics */}
+      {/* ── CVAE Conditional Generation Panel ───────────────────────────── */}
+      <motion.div variants={itemVariants} className="glass-panel p-6">
+        <div className="section-title">
+          <div className="section-icon"><FlaskConical className="w-4 h-4" /></div>
+          Conditional Generation (CVAE)
+          <span className="ml-auto text-xs font-semibold px-2.5 py-1 rounded-full bg-purple-100 text-purple-700 border border-purple-200">
+            NEW — Feature Injection
+          </span>
+        </div>
+        <p className="text-sm text-slate-500 mb-6 -mt-3 max-w-2xl">
+          Select a safety class to <strong className="text-slate-700">condition the generation</strong> — the CVAE injects
+          a one-hot class embedding into both the encoder and decoder, steering the latent space
+          toward scenes associated with that class.
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+          {/* Left: Controls */}
+          <div className="space-y-6">
+
+            {/* Class selector grid */}
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3 block">
+                Step 1 — Select Safety Class Condition
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {SAFETY_CLASSES.map((cls) => {
+                  const s = CLASS_STYLE[cls.type];
+                  const isSelected = selectedClass?.idx === cls.idx;
+                  return (
+                    <button
+                      key={cls.idx}
+                      onClick={() => { setSelectedClass(cls); setCvaeUrl(null); setCvaeResult(null); }}
+                      className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl border text-sm font-medium
+                                  transition-all duration-200 text-left
+                                  ${isSelected
+                                    ? `${s.border} ${s.bg} ${s.text} ring-2 ${s.ring} shadow-sm`
+                                    : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
+                                  }`}
+                    >
+                      <span className="text-base flex-shrink-0">{cls.emoji}</span>
+                      <span className="leading-tight">{cls.label}</span>
+                      {isSelected && <CheckCircle2 className="w-3.5 h-3.5 ml-auto flex-shrink-0" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Temperature slider */}
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-2">
+                <Thermometer className="w-3.5 h-3.5" />
+                Step 2 — Sampling Temperature
+                <span className="ml-auto font-black text-slate-800 text-sm">{temperature.toFixed(1)}</span>
+              </label>
+              <input
+                type="range" min="0.3" max="2.0" step="0.1"
+                value={temperature}
+                onChange={(e) => setTemperature(parseFloat(e.target.value))}
+                className="w-full h-2 rounded-full appearance-none cursor-pointer
+                           bg-gradient-to-r from-primary/30 via-purple-400/40 to-rose-400/40"
+              />
+              <div className="flex justify-between text-[10px] text-slate-400 mt-1.5">
+                <span>0.3 — Focused</span>
+                <span>1.0 — Balanced</span>
+                <span>2.0 — Diverse</span>
+              </div>
+              <p className="text-xs text-slate-400 mt-2">
+                Low temperature → latent z stays near μ (predictable).
+                High temperature → z explores further from μ (creative, varied).
+              </p>
+            </div>
+
+            {/* Generate button */}
+            <button
+              onClick={handleCvaeGenerate}
+              disabled={selectedClass === null || isCvaeGenerating}
+              className="btn-primary w-full disabled:opacity-40"
+            >
+              {isCvaeGenerating ? (
+                <><Loader2 className="w-5 h-5 animate-spin" /> Generating conditioned scene...</>
+              ) : (
+                <><Zap className="w-5 h-5" /> Generate — Conditioned on "{selectedClass?.label ?? '…'}"
+                </>
+              )}
+            </button>
+
+            {/* Architecture note */}
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-500 space-y-1.5">
+              <div className="font-semibold text-slate-700 mb-2 flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5" /> CVAE Condition Injection Points
+              </div>
+              <div>🔹 <strong>Encoder:</strong> one-hot → Linear(64) → concat with CNN features → μ, σ heads</div>
+              <div>🔹 <strong>Decoder:</strong> one-hot → Linear(64) → concat with z → FC expansion → deconv</div>
+              <div className="pt-1 text-[10px] text-slate-400">
+                Latent dim: 256 · Condition dim: 64 · Total encoder input: 16,448-d
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Output */}
+          <div className="space-y-4">
+            <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 block">
+              Generated Scene
+            </label>
+
+            <div className="relative w-full aspect-square rounded-2xl overflow-hidden border-2
+                            border-dashed border-slate-200 bg-slate-50 flex items-center justify-center">
+              {isCvaeGenerating && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm z-10">
+                  <Loader2 className="w-10 h-10 animate-spin text-purple-500 mb-3" />
+                  <p className="text-sm text-slate-600 font-medium">Sampling from conditioned latent space…</p>
+                  <p className="text-xs text-slate-400 mt-1">z ~ N(0,I) conditioned on {selectedClass?.label}</p>
+                </div>
+              )}
+              {cvaeUrl ? (
+                <motion.img
+                  key={cvaeUrl}
+                  initial={{ opacity: 0, scale: 0.97 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.4 }}
+                  src={cvaeUrl} alt="CVAE Generated"
+                  className="w-full h-full object-cover"
+                />
+              ) : !isCvaeGenerating && (
+                <div className="flex flex-col items-center text-slate-400">
+                  <FlaskConical className="w-12 h-12 mb-3 opacity-20" />
+                  <p className="text-sm">Select a class and generate</p>
+                </div>
+              )}
+            </div>
+
+            {/* Result metadata */}
+            {cvaeResult && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                className="p-4 rounded-xl border bg-white space-y-3"
+                style={{
+                  borderColor: CLASS_STYLE[selectedClass?.type]?.border?.replace('border-', '') || '#e2e8f0'
+                }}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-slate-500 font-medium">Condition Applied</span>
+                  <span className={`text-xs font-bold px-2.5 py-1 rounded-full border
+                    ${CLASS_STYLE[cvaeResult ? SAFETY_CLASSES[cvaeResult.class_idx]?.type : 'neutral']?.badge}`}>
+                    {cvaeResult.class_name}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-slate-500 font-medium">Temperature</span>
+                  <span className="text-xs font-bold text-slate-700">{cvaeResult.temperature.toFixed(1)}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-slate-500 font-medium">Class Type</span>
+                  <span className={`text-xs font-semibold flex items-center gap-1
+                    ${SAFETY_CLASSES[cvaeResult.class_idx]?.type === 'danger' ? 'text-rose-600' :
+                      SAFETY_CLASSES[cvaeResult.class_idx]?.type === 'safe' ? 'text-emerald-600' : 'text-slate-600'}`}>
+                    {SAFETY_CLASSES[cvaeResult.class_idx]?.type === 'danger'
+                      ? <><AlertTriangle className="w-3 h-3" /> Violation / Hazard</>
+                      : SAFETY_CLASSES[cvaeResult.class_idx]?.type === 'safe'
+                      ? <><CheckCircle2 className="w-3 h-3" /> PPE Compliant</>
+                      : 'Neutral'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-slate-500 font-medium">Latent z dimension</span>
+                  <span className="text-xs font-mono font-bold text-slate-700">256 + 64 cond = 320</span>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        </div>
+      </motion.div>
+
       <motion.div variants={itemVariants}>
         <div className="section-title">
           <div className="section-icon"><Activity className="w-4 h-4" /></div>

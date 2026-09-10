@@ -52,6 +52,25 @@ async def vae_reconstruct(file: UploadFile = File(...)):
     result = inference_manager.reconstruct_vae(content)
     return JSONResponse(content=result)
 
+@app.post("/api/vae/generate_conditional")
+async def vae_generate_conditional(
+    class_idx:   int   = Form(...),
+    temperature: float = Form(default=1.0),
+):
+    """
+    Conditional VAE generation.
+    Generates a construction site image conditioned on a specific safety class.
+
+    Args:
+        class_idx   : Safety class index 0–9
+                      0=Hardhat, 1=Mask, 2=NO-Hardhat, 3=NO-Mask,
+                      4=NO-Safety Vest, 5=Person, 6=Safety Cone,
+                      7=Safety Vest, 8=machinery, 9=vehicle
+        temperature : Sampling temperature (0.5–2.0). Higher = more diverse.
+    """
+    result = inference_manager.generate_cvae(class_idx=class_idx, temperature=temperature)
+    return JSONResponse(content=result)
+
 @app.post("/api/gan/generate")
 async def gan_generate():
     """Generate a high-fidelity synthetic image using GAN"""
