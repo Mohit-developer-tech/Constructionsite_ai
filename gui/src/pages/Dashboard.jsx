@@ -634,42 +634,29 @@ export default function Dashboard() {
                         </div>
 
                         {/* Tri-View Comparison */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                           <div className="bg-slate-900/80 rounded-xl p-3 border border-cyan-500/30 text-center">
                             <span className="text-[10px] font-mono font-bold text-cyan-300 uppercase block mb-2">1. Detected Objects &amp; OSHA Bounding Boxes</span>
                             <div className="aspect-square rounded-lg overflow-hidden bg-slate-950 border border-cyan-500/30">
-                              <img src={testResult.result.annotated_image || testResult.result.future_sim_image} alt="Detected Objects" className="w-full h-full object-cover" />
+                              <img src={testResult.result.annotated_image || testResult.result.future_sim_image || selectedSample.image} alt="Detected Objects" className="w-full h-full object-cover" />
                             </div>
+                            <span className="text-[9px] font-mono text-cyan-300/80 block mt-2">OSHA Bounding Boxes &amp; Classes</span>
                           </div>
+
                           <div className="bg-slate-900/80 rounded-xl p-3 border border-purple-500/30 text-center">
                             <span className="text-[10px] font-mono font-bold text-purple-300 uppercase block mb-2">2. 8-Head ViT Attention Rollout (Plasma)</span>
                             <div className="aspect-square rounded-lg overflow-hidden bg-slate-950 border border-purple-500/30">
-                              <img src={testResult.result.attention_map || testResult.result.risk_map_image} alt="ViT Attention Map" className="w-full h-full object-cover" />
+                              <img src={testResult.result.attention_map || testResult.result.risk_map_image || testResult.result.attention_map_image || selectedSample.image} alt="ViT Attention Map" className="w-full h-full object-cover" />
                             </div>
-                            <div className="aspect-square rounded-lg overflow-hidden bg-slate-950 border border-cyan-500/20">
-                              <img src={testResult.result.future_sim_image || selectedSample.image} alt="Site Feed" className="w-full h-full object-cover" />
-                            </div>
-                            <span className="text-[10px] text-slate-400 mt-2 block">
-                              Raw construction site camera input frame
-                            </span>
+                            <span className="text-[9px] font-mono text-purple-300/80 block mt-2">Class Token Self-Attention Rollout</span>
                           </div>
 
                           <div className="bg-slate-900/80 rounded-xl p-3 border border-indigo-500/30 text-center">
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="text-xs font-mono font-bold text-indigo-300 uppercase flex items-center gap-1.5">
-                                <Layers className="w-3.5 h-3.5 text-indigo-400" />
-                                8-Head Attention Heatmap
-                              </span>
-                              <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-indigo-950/80 text-indigo-300 border border-indigo-500/30">
-                                Self-Attention Rollout
-                              </span>
-                            </div>
+                            <span className="text-[10px] font-mono font-bold text-indigo-300 uppercase block mb-2">3. Spatial Risk &amp; Fall Zone Heatmap</span>
                             <div className="aspect-square rounded-lg overflow-hidden bg-slate-950 border border-indigo-500/20">
-                              <img src={testResult.result.attention_map_image} alt="Attention Map" className="w-full h-full object-cover" />
+                              <img src={testResult.result.risk_map_image || testResult.result.attention_map_image || testResult.result.future_sim_image || selectedSample.image} alt="Hazard Risk Map" className="w-full h-full object-cover" />
                             </div>
-                            <span className="text-[10px] text-slate-400 mt-2 block">
-                              Cross-patch multi-head self-attention distribution
-                            </span>
+                            <span className="text-[9px] font-mono text-indigo-300/80 block mt-2">Machine Proximity &amp; Hazard Corridor</span>
                           </div>
                         </div>
 

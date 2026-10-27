@@ -174,7 +174,7 @@ export default function AutoencoderView() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-3xl font-black text-slate-800 tracking-tight">Autoencoder &amp; Classification</h2>
+                <h2 className="text-3xl font-black gradient-text tracking-tight">Autoencoder &amp; Classification</h2>
                 <span className="badge badge-primary font-bold">PRACT 2 &middot; Optimized V2</span>
               </div>
               <p className="text-xs text-cyan-400 font-mono tracking-widest uppercase mt-0.5">

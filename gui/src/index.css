@@ -488,3 +488,119 @@
 .ethics-card-safety::before { background: #00f0ff; }
 .ethics-card-responsible::before { background: #818cf8; }
 .ethics-card-sustainability::before { background: #10b981; }
+
+/* ═══════════════════════════════════════════════
+   INFO GRID / MODEL SPECIFICATIONS
+   ═══════════════════════════════════════════════ */
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 0.75rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  transition: border-color 0.2s ease;
+}
+
+.info-item:hover {
+  border-color: rgba(0, 240, 255, 0.3);
+}
+
+.info-label {
+  color: #94a3b8;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.info-value {
+  color: #00f0ff;
+  font-weight: 700;
+  text-align: right;
+  word-break: break-word;
+}
+
+/* ═══════════════════════════════════════════════
+   DATA TABLES (Comparative & Ethics)
+   ═══════════════════════════════════════════════ */
+
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.8125rem;
+}
+
+.data-table th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: #94a3b8;
+  text-transform: uppercase;
+  font-size: 0.6875rem;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.6);
+  white-space: nowrap;
+}
+
+.data-table td {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
+  vertical-align: middle;
+}
+
+.data-table tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* ═══════════════════════════════════════════════
+   PROGRESS BARS & UPLOAD ZONES
+   ═══════════════════════════════════════════════ */
+
+.progress-bar {
+  height: 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+}
+
+.upload-zone {
+  border: 2px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 0.75rem;
+  background: rgba(15, 23, 42, 0.4);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.upload-zone:hover {
+  border-color: rgba(0, 240, 255, 0.5);
+  background: rgba(0, 240, 255, 0.04);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+

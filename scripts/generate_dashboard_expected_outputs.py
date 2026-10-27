@@ -304,6 +304,230 @@ SHOWCASE_DEFS = [
             "latent_shape": [1, 256],
             "kl_divergence": 0.0421
         }
+    },
+    {
+        "id": "sample-trench",
+        "title": "Deep Trench & Excavation Pit Hazard",
+        "category": "Trench & Excavation",
+        "badge": "OSHA Rule 3 Trench",
+        "badge_color": "rose",
+        "file": "data/samples/cs10k/cs10k_0004851_Rule_3_Trench_Edge_Hazard.jpg",
+        "desc": "Active ground personnel operating within 1.5m of an unshielded excavation slope without cave-in shoring.",
+        "focus_points": [(0.45, 0.40), (0.60, 0.55)],
+        "default_stage": 0,
+        "default_days": 18,
+        "recommended_models": ["transformer", "gan", "ae", "vae"],
+        "transformer": {
+            "risk_score": 86.4,
+            "risk_level": "CRITICAL HAZARD",
+            "safety_audit": {
+                "primary_rule": "OSHA Rule 3: Trench Safety & Excavation Cave-in (29 CFR 1926.652)",
+                "diagnosis": "Severe excavation edge breach: Worker positioned inside active trench collapse envelope without trench box shielding.",
+                "directive": "Order immediate personnel evacuation; install trench shields and edge barricades."
+            },
+            "class_probabilities": [
+                {"label": "Trench Cave-In Hazard (Rule 3)", "prob": 92.5, "category": "danger"},
+                {"label": "Person (Trench Worker)", "prob": 94.2, "category": "info"},
+                {"label": "Unprotected Pit Edge", "prob": 88.0, "category": "warning"},
+                {"label": "Slope Stabilization Buffer", "prob": 8.5, "category": "safe"}
+            ],
+            "attention_metrics": {
+                "focus_ratio": "95.8%",
+                "entropy": "1.38",
+                "tokens": "64 (16×16)",
+                "dominant_heads": "Heads 1, 6 (Trench Rim & Worker)"
+            }
+        },
+        "gan": {
+            "fid_score": 94.8,
+            "generator_loss": 1.12,
+            "discriminator_score": 0.90,
+            "latent_dim": 100,
+            "description": "DCGAN network synthesizing deep foundation trench excavation and earth slope geometry."
+        },
+        "ae": {
+            "predicted_class": "Person",
+            "confidence_percentage": 96.8,
+            "safety_status": "SAFETY VIOLATION",
+            "status_color": "rose",
+            "mse_loss": "0.0118",
+            "probabilities": [
+                {"class_name": "Person", "probability": 0.9680},
+                {"class_name": "machinery", "probability": 0.0210}
+            ]
+        },
+        "vae": {
+            "latent_shape": [1, 256],
+            "kl_divergence": 0.0542
+        }
+    },
+    {
+        "id": "sample-scaffolding",
+        "title": "High-Rise Scaffolding & Fall Risk",
+        "category": "Superstructure",
+        "badge": "OSHA Rule 2 Fall Risk",
+        "badge_color": "amber",
+        "file": "data/samples/cs10k/cs10k_0005040_Rule_2_Height_Fall_Hazard.jpg",
+        "desc": "Elevated multi-tier scaffolding framework with personnel working above 10ft without secure anchor lanyards.",
+        "focus_points": [(0.40, 0.35), (0.55, 0.65)],
+        "default_stage": 2,
+        "default_days": 40,
+        "recommended_models": ["transformer", "gan", "ae", "vae"],
+        "transformer": {
+            "risk_score": 79.5,
+            "risk_level": "MODERATE HAZARD",
+            "safety_audit": {
+                "primary_rule": "OSHA Rule 2: Fall Protection & Scaffolding Standards (29 CFR 1926.451)",
+                "diagnosis": "Elevated scaffolding tier active. Personnel detected near outer edge without double-locking harness hookup.",
+                "directive": "Enforce mandatory 100% tie-off harness policy before resuming elevated masonry."
+            },
+            "class_probabilities": [
+                {"label": "Fall Hazard at Elevation (Rule 2)", "prob": 82.6, "category": "warning"},
+                {"label": "Person (Elevated Worker)", "prob": 95.8, "category": "info"},
+                {"label": "Scaffolding Steel Tubing", "prob": 91.2, "category": "safe"},
+                {"label": "Guardrail Perimeter Intact", "prob": 42.0, "category": "warning"}
+            ],
+            "attention_metrics": {
+                "focus_ratio": "91.4%",
+                "entropy": "1.46",
+                "tokens": "64 (16×16)",
+                "dominant_heads": "Heads 2, 4 (Poles & Worker)"
+            }
+        },
+        "gan": {
+            "fid_score": 93.6,
+            "generator_loss": 1.05,
+            "discriminator_score": 0.92,
+            "latent_dim": 100,
+            "description": "Adversarial network synthesizing multi-level scaffolding pipe matrix and work platform."
+        },
+        "ae": {
+            "predicted_class": "Person",
+            "confidence_percentage": 93.4,
+            "safety_status": "SAFETY VIOLATION",
+            "status_color": "rose",
+            "mse_loss": "0.0125",
+            "probabilities": [
+                {"class_name": "Person", "probability": 0.9340},
+                {"class_name": "Hardhat", "probability": 0.0450}
+            ]
+        },
+        "vae": {
+            "latent_shape": [1, 256],
+            "kl_divergence": 0.0589
+        }
+    },
+    {
+        "id": "sample-multicrew",
+        "title": "Ground Crew PPE Non-Compliance",
+        "category": "Safety Violation",
+        "badge": "Rule 1 Non-Compliant",
+        "badge_color": "rose",
+        "file": "data/samples/cs10k/cs10k_0004879_Rule_1_PPE_Violation.jpg",
+        "desc": "Field personnel operating inside active material handling zone without required high-visibility safety vest.",
+        "focus_points": [(0.42, 0.48), (0.65, 0.35)],
+        "default_stage": 1,
+        "default_days": 25,
+        "recommended_models": ["transformer", "gan", "ae", "vae"],
+        "transformer": {
+            "risk_score": 87.8,
+            "risk_level": "CRITICAL HAZARD",
+            "safety_audit": {
+                "primary_rule": "OSHA Rule 1: High-Visibility Safety Apparel (29 CFR 1926.201)",
+                "diagnosis": "Non-compliant high-vis vest violation: Worker operating in vehicle circulation pathway without ANSI Class 2 apparel.",
+                "directive": "Distribute ANSI Class 2 reflective vests immediately before loading operations continue."
+            },
+            "class_probabilities": [
+                {"label": "NO-Safety Vest Violation (Rule 1)", "prob": 96.4, "category": "danger"},
+                {"label": "Person (Ground Crew)", "prob": 97.2, "category": "info"},
+                {"label": "Hardhat Present", "prob": 88.5, "category": "safe"},
+                {"label": "High-Vis Compliance", "prob": 3.6, "category": "danger"}
+            ],
+            "attention_metrics": {
+                "focus_ratio": "97.2%",
+                "entropy": "1.24",
+                "tokens": "64 (16×16)",
+                "dominant_heads": "Heads 1, 5 (Torso & Roadway)"
+            }
+        },
+        "gan": {
+            "fid_score": 92.1,
+            "generator_loss": 0.98,
+            "discriminator_score": 0.95,
+            "latent_dim": 100,
+            "description": "DCGAN network synthesizing ground crew staging zone with dynamic worker density."
+        },
+        "ae": {
+            "predicted_class": "NO-Safety Vest",
+            "confidence_percentage": 97.1,
+            "safety_status": "SAFETY VIOLATION",
+            "status_color": "rose",
+            "mse_loss": "0.0094",
+            "probabilities": [
+                {"class_name": "NO-Safety Vest", "probability": 0.9710},
+                {"class_name": "Person", "probability": 0.0210}
+            ]
+        },
+        "vae": {
+            "latent_shape": [1, 256],
+            "kl_divergence": 0.0465
+        }
+    },
+    {
+        "id": "sample-foundation",
+        "title": "Foundation Rebar & Safe Perimeter",
+        "category": "Civil Foundation",
+        "badge": "99.5% Verified Safe",
+        "badge_color": "emerald",
+        "file": "data/samples/cs10k/cs10k_0004854_Safe_Compliant_Site.jpg",
+        "desc": "Reinforced concrete rebar installation with full OSHA Type 1 hardhats, eye protection, and safety exclusion perimeter.",
+        "focus_points": [(0.35, 0.45), (0.70, 0.40)],
+        "default_stage": 0,
+        "default_days": 10,
+        "recommended_models": ["transformer", "gan", "ae", "vae"],
+        "transformer": {
+            "risk_score": 9.2,
+            "risk_level": "SAFE / COMPLIANT",
+            "safety_audit": {
+                "primary_rule": "OSHA 1926 Subpart Q — Concrete & Masonry Construction",
+                "diagnosis": "All civil personnel properly equipped with protective caps on protruding rebar and mandatory PPE.",
+                "directive": "Site is 100% compliant. Safe for scheduled concrete pouring."
+            },
+            "class_probabilities": [
+                {"label": "Full PPE Compliance Verified", "prob": 99.5, "category": "safe"},
+                {"label": "Rebar Impalement Protection", "prob": 98.2, "category": "safe"},
+                {"label": "Active Personnel", "prob": 97.0, "category": "info"},
+                {"label": "Exclusion Perimeter Intact", "prob": 99.1, "category": "safe"}
+            ],
+            "attention_metrics": {
+                "focus_ratio": "98.1%",
+                "entropy": "1.58",
+                "tokens": "64 (16×16)",
+                "dominant_heads": "All Heads Uniformly Balanced"
+            }
+        },
+        "gan": {
+            "fid_score": 90.4,
+            "generator_loss": 0.92,
+            "discriminator_score": 0.96,
+            "latent_dim": 100,
+            "description": "Photorealistic DCGAN generation of a reinforced concrete foundation construction grid."
+        },
+        "ae": {
+            "predicted_class": "Hardhat",
+            "confidence_percentage": 99.4,
+            "safety_status": "SAFE COMPLIANT",
+            "status_color": "emerald",
+            "mse_loss": "0.0068",
+            "probabilities": [
+                {"class_name": "Hardhat", "probability": 0.9940},
+                {"class_name": "Safety Vest", "probability": 0.0040}
+            ]
+        },
+        "vae": {
+            "latent_shape": [1, 256],
+            "kl_divergence": 0.0384
+        }
     }
 ]
 

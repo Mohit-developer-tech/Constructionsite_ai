@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Image as ImageIcon, Sparkles, Layers, Box,
@@ -14,6 +15,18 @@ import DiffusionView from './pages/DiffusionView';
 import ComparativeAnalysis from './pages/ComparativeAnalysis';
 import EthicsView from './pages/EthicsView';
 import AIChatbot from './components/AIChatbot';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    const mainEl = document.querySelector('main');
+    if (mainEl) {
+      mainEl.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }, [pathname]);
+  return null;
+}
+
 
 function Sidebar() {
   const location = useLocation();
@@ -151,6 +164,7 @@ function Sidebar() {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <div className="flex w-full min-h-screen bg-[#080c14] text-slate-100 font-sans antialiased overflow-hidden selection:bg-cyan-500/30 selection:text-cyan-200">
         <Sidebar />
         <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative">

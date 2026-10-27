@@ -52,7 +52,10 @@ DATASET_CANDIDATES = [
     os.path.join(BASE_DIR, "data"),
     os.path.join(BASE_DIR, "css-data"),
 ]
-DATASET_PATH = next((p for p in DATASET_CANDIDATES if os.path.exists(p)), DATASET_CANDIDATES[0])
+DATASET_PATH = next(
+    (p for p in DATASET_CANDIDATES if os.path.exists(os.path.join(p, "test", "images"))),
+    DATASET_CANDIDATES[0]
+)
 
 
 class ModelInferenceManager:
@@ -570,14 +573,15 @@ class ModelInferenceManager:
                         if len(parts) != 5:
                             continue
                         gt_cls = int(parts[0])
-                        if not (0 <= gt_cls < NUM_CLASSES):
-                            continue
                         xc, yc, bw, bh = map(float, parts[1:])
-                        x1 = max(0, int((xc - bw/2) * w))
-                        y1 = max(0, int((yc - bh/2) * h))
-                        x2 = min(w, int((xc + bw/2) * w))
-                        y2 = min(h, int((yc + bh/2) * h))
-                        if x2 - x1 < 10 or y2 - y1 < 10:
+                        # Add small contextual padding (8%) and ensure minimum resolution of 28px
+                        pad_x = int(bw * w * 0.08)
+                        pad_y = int(bh * h * 0.08)
+                        x1 = max(0, int((xc - bw/2) * w) - pad_x)
+                        y1 = max(0, int((yc - bh/2) * h) - pad_y)
+                        x2 = min(w, int((xc + bw/2) * w) + pad_x)
+                        y2 = min(h, int((yc + bh/2) * h) + pad_y)
+                        if (x2 - x1) < 28 or (y2 - y1) < 28:
                             continue
 
                         crop = im_rgb.crop((x1, y1, x2, y2)).resize((128, 128))
@@ -634,14 +638,19 @@ class ModelInferenceManager:
     # Curated Preset Test Samples (For Dashboard & All Models)
     # --------------------------------------------------------------------------
     def _load_curated_data(self):
-        if self._cached_preset_samples is not None and self._curated_outputs is not None:
-            return
-
         json_candidates = [
             os.path.join(BASE_DIR, "data", "expectedOutputs.json"),
             os.path.join(BASE_DIR, "gui", "src", "data", "expectedOutputs.json")
         ]
         json_path = next((p for p in json_candidates if os.path.exists(p)), None)
+        if not json_path:
+            return
+
+        mtime = os.path.getmtime(json_path)
+        if getattr(self, "_curated_json_mtime", None) == mtime and self._cached_preset_samples is not None:
+            return
+
+        self._curated_json_mtime = mtime
         if json_path:
             try:
                 import json
